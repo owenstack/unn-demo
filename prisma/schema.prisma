@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator zod {
+  provider  = "zod-prisma"
+  output    = "./zod"
+  modelCase = "camelCase"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  RRR       String   @unique
+  invoiceId String   @unique
+  paidAt    DateTime @default(now())
+}
+
+model Admins {
+  id       String @id @default(cuid())
+  username String @unique
+  roleId   String
+  role     Role   @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id           String   @id @default(cuid())
+  role         String   @default("Admin")
+  isAdmin      Boolean  @default(false)
+  isDean       Boolean  @default(false)
+  isSupervisor Boolean  @default(false)
+  admins       Admins[]
+}
