@@ -1,3 +1,4 @@
 export * from "./student"
-export * from "./admins"
+export * from "./user"
 export * from "./role"
+export * from "./session"

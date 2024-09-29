@@ -1,16 +1,13 @@
 import * as z from "zod"
-import { CompleteAdmins, relatedAdminsModel } from "./index"
+import { CompleteUser, relatedUserModel } from "./index"
 
 export const roleModel = z.object({
-  id: z.string(),
+  id: z.number().int(),
   role: z.string(),
-  isAdmin: z.boolean(),
-  isDean: z.boolean(),
-  isSupervisor: z.boolean(),
 })
 
 export interface CompleteRole extends z.infer<typeof roleModel> {
-  admins: CompleteAdmins[]
+  Users: CompleteUser[]
 }
 
 /**
@@ -19,5 +16,5 @@ export interface CompleteRole extends z.infer<typeof roleModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const relatedRoleModel: z.ZodSchema<CompleteRole> = z.lazy(() => roleModel.extend({
-  admins: relatedAdminsModel.array(),
+  Users: relatedUserModel.array(),
 }))

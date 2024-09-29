@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import NavBar from "@/components/nav-bar";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
@@ -28,13 +27,10 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable}bg-background antialiased`}
 			>
-				<main className="bg-background min-h-screen">
-					<NavBar />
-					{children}
-					<Toaster />
-				</main>
+				{children}
+				<Toaster />
 			</body>
 		</html>
 	);

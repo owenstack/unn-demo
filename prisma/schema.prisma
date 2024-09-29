@@ -29,18 +29,27 @@ model Student {
   paidAt    DateTime @default(now())
 }
 
-model Admins {
-  id       String @id @default(cuid())
-  username String @unique
-  roleId   String
-  role     Role   @relation(fields: [roleId], references: [id])
+model User {
+  id             String    @id @default(cuid())
+  sessions       Session[]
+  email          String    @unique
+  fullName       String
+  hashedPassword String    @unique
+  roleId         Int
+  role           Role      @relation(fields: [roleId], references: [id])
 }
 
 model Role {
-  id           String   @id @default(cuid())
-  role         String   @default("Admin")
-  isAdmin      Boolean  @default(false)
-  isDean       Boolean  @default(false)
-  isSupervisor Boolean  @default(false)
-  admins       Admins[]
+  id    Int    @id @default(autoincrement())
+  role  String @default("User")
+  Users User[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  userId    String
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@index([userId])
 }

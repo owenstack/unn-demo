@@ -1,7 +1,7 @@
 import * as z from "zod"
 import { CompleteSession, relatedSessionModel, CompleteRole, relatedRoleModel } from "./index"
 
-export const adminsModel = z.object({
+export const userModel = z.object({
   id: z.string(),
   email: z.string(),
   fullName: z.string(),
@@ -9,17 +9,17 @@ export const adminsModel = z.object({
   roleId: z.number().int(),
 })
 
-export interface CompleteAdmins extends z.infer<typeof adminsModel> {
+export interface CompleteUser extends z.infer<typeof userModel> {
   sessions: CompleteSession[]
   role: CompleteRole
 }
 
 /**
- * relatedAdminsModel contains all relations on your model in addition to the scalars
+ * relatedUserModel contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const relatedAdminsModel: z.ZodSchema<CompleteAdmins> = z.lazy(() => adminsModel.extend({
+export const relatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() => userModel.extend({
   sessions: relatedSessionModel.array(),
   role: relatedRoleModel,
 }))

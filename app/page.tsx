@@ -13,6 +13,7 @@ import { useState, useTransition } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/nav-bar";
 
 export default function Page() {
 	const router = useRouter();
@@ -43,33 +44,36 @@ export default function Page() {
 	}
 
 	return (
-		<section className="flex flex-col gap-4 p-4 items-center justify-center">
-			<Card className="max-w-md w-full mt-36">
-				<CardHeader>
-					<CardTitle>UNN Clearance Portal</CardTitle>
-					<CardDescription>Pay for your hostel clearance</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<form onSubmit={submit} className="grid gap-4">
-						<div>
-							<label htmlFor="RRR">Enter your hostel receipt RRR</label>
-							<Input
-								id="RRR"
-								required
-								value={RRR}
-								onChange={(e) => setRRR(e.target.value)}
-							/>
-						</div>
-						<Button type="submit" disabled={pending}>
-							{pending ? (
-								<LoaderCircle className="w-4 h-4 animate-spin" />
-							) : (
-								"Submit"
-							)}
-						</Button>
-					</form>
-				</CardContent>
-			</Card>
-		</section>
+		<>
+			<NavBar />
+			<section className="flex flex-col gap-4 p-4 items-center justify-center">
+				<Card className="max-w-md w-full mt-36">
+					<CardHeader>
+						<CardTitle>UNN Clearance Portal</CardTitle>
+						<CardDescription>Pay for your hostel clearance</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<form onSubmit={submit} className="grid gap-4">
+							<div>
+								<label htmlFor="RRR">Enter your hostel receipt RRR</label>
+								<Input
+									id="RRR"
+									required
+									value={RRR}
+									onChange={(e) => setRRR(e.target.value)}
+								/>
+							</div>
+							<Button type="submit" disabled={pending}>
+								{pending ? (
+									<LoaderCircle className="w-4 h-4 animate-spin" />
+								) : (
+									"Submit"
+								)}
+							</Button>
+						</form>
+					</CardContent>
+				</Card>
+			</section>
+		</>
 	);
 }
