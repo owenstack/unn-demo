@@ -57,7 +57,7 @@ export function PayForm({ rrr }: { rrr: string }) {
 		publicKey: "pk_test_2255cad94acf9d391fc7b3fb02d287d00ee1ea09",
 		reference: form.getValues("RRR"),
 		email: form.getValues("email"),
-		amount: 20000,
+		amount: 20000, //N200 as it is a test, to actually confirm functionality you may have to pay that is why it is set to a very low amount
 		onSuccess,
 		onClose,
 	};

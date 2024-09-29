@@ -24,6 +24,7 @@ export default function Page() {
 	function submit(e: React.FormEvent) {
 		e.preventDefault();
 		startTransition(() => {
+			//TODO: Implement actual RRR verification from Remit, woulda used my remita account but I have not completed verification
 			try {
 				toast({
 					title: "Verifying RRR",

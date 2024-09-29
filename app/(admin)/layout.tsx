@@ -4,6 +4,8 @@ import { DashNav } from "@/components/dash-nav";
 import { getAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
+//TODO: implement more fine grained RBAC, ie, hiding routes based on user role
+
 export default async function DashLayout({
 	children,
 }: { children: ReactNode }) {
