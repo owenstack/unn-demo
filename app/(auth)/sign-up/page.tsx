@@ -20,6 +20,8 @@ import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 
+//TODO: Delete this page to prevent unauthorized account creation. Since it is an internal tool, admin will create, modify and delete users
+
 export default function Page() {
 	const { toast } = useToast();
 	const [pending, startTransition] = useTransition();

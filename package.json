@@ -19,6 +19,7 @@
     "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.1.2",
     "class-variance-authority": "^0.7.0",
@@ -27,6 +28,7 @@
     "lucide-react": "^0.446.0",
     "nanoid": "^5.0.7",
     "next": "14.2.13",
+    "nuqs": "^1.19.3",
     "oslo": "^1.2.1",
     "react": "^18",
     "react-dom": "^18",
@@ -35,6 +37,7 @@
     "swr": "^2.2.5",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "use-debounce": "^10.0.3",
     "zod": "^3.23.8",
     "zod-prisma": "^0.5.4"
   },

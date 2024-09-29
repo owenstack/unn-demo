@@ -40,7 +40,7 @@ export async function signUp(formData: FormData) {
 		sessionCookie.value,
 		sessionCookie.attributes,
 	);
-	redirect("/dashboard");
+	redirect("/verify");
 }
 
 export async function signIn(formData: FormData) {
@@ -65,10 +65,10 @@ export async function signIn(formData: FormData) {
 		sessionCookie.value,
 		sessionCookie.attributes,
 	);
-	redirect("/dashboard");
+	redirect("/verify");
 }
 
-export async function signOut(_formData: FormData) {
+export async function signOut() {
 	const { session } = await getAuth();
 	if (!session) {
 		redirect("/login");
