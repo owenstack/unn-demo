@@ -32,3 +32,21 @@ export async function createStudent(values: Student) {
 		return { error: "Internal server error" };
 	}
 }
+
+export async function searchStudent(search: string) {
+	try {
+		const students = await prisma.student.findMany({
+			where: {
+				OR: [
+					{ invoiceId: { contains: search } },
+					{ name: { contains: search } },
+				],
+			},
+		});
+		if (!students) return { error: "Students not found" };
+		return { success: true, message: students };
+	} catch (error) {
+		console.error(error);
+		return { error: "Internal server error" };
+	}
+}

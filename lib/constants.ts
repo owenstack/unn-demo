@@ -36,9 +36,9 @@ export const sidebarList: Menu[] = [
 		icon: "FileText",
 	},
 	{
-		name: "Analytics",
-		url: "/analyze",
-		icon: "BarChart",
+		name: "Settings",
+		url: "/settings",
+		icon: "Cog",
 	},
 ];
 
