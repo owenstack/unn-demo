@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
-import { SideBar } from "@/components/side-bar";
 import { DashNav } from "@/components/dash-nav";
+import { SideBar } from "@/components/side-bar";
 import { getAuth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { sidebarList } from "@/lib/constants";
+import { redirect } from "next/navigation";
+import type { ReactNode } from "react";
 
 export default async function DashLayout({
 	children,

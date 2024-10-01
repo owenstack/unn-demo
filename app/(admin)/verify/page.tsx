@@ -1,26 +1,26 @@
 "use client";
 
+import { getStudent } from "@/actions/students";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
-	CardHeader,
-	CardTitle,
 	CardContent,
 	CardFooter,
+	CardHeader,
+	CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useTransition, useState } from "react";
 import { Form, FormField } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { invoiceSchema, type Invoice, type Student } from "@/lib/constants";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { type Invoice, type Student, invoiceSchema } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { getStudent } from "@/actions/students";
-import { Label } from "@/components/ui/label";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 
 export default function Page() {
-	const [student, setStudent] = useState<Student | null>(null);
+	const [student, setStudent] = useState<Student | undefined>(undefined);
 	const { toast } = useToast();
 	const [pending, startTransition] = useTransition();
 
@@ -34,17 +34,17 @@ export default function Page() {
 	function submit(values: Invoice) {
 		startTransition(async () => {
 			try {
-				const response = await getStudent(values);
-				setStudent(response);
-			} catch (error) {
-				console.error(error);
-				if (error instanceof Error) {
+				const { message, error } = await getStudent(values);
+				if (error) {
 					toast({
-						title: "Something went wrong",
-						description: error.message,
+						title: "Failed to get user",
+						description: error,
 						variant: "destructive",
 					});
 				}
+				setStudent(message);
+			} catch (error) {
+				console.error(error);
 				toast({
 					title: "Something went wrong",
 					description: "Internal server error",
@@ -111,7 +111,7 @@ export default function Page() {
 						</div>
 					</CardContent>
 					<CardFooter className="flex justify-end">
-						<Button onClick={() => setStudent(null)}>Ok</Button>
+						<Button onClick={() => setStudent(undefined)}>Ok</Button>
 					</CardFooter>
 				</Card>
 			)}

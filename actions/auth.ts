@@ -1,13 +1,13 @@
 "use server";
 
+import { getAuth } from "@/lib/auth";
+import { adminSchema, signInSchema, signUpSchema } from "@/lib/constants";
+import prisma from "@/lib/db";
+import { lucia } from "@/lib/lucia";
 import { generateId } from "lucia";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Argon2id } from "oslo/password";
-import { lucia } from "@/lib/lucia";
-import prisma from "@/lib/db";
-import { signUpSchema, signInSchema } from "@/lib/constants";
-import { getAuth } from "@/lib/auth";
 
 export async function signUp(formData: FormData) {
 	const formDataRaw = {
@@ -15,32 +15,67 @@ export async function signUp(formData: FormData) {
 		password: formData.get("password") as string,
 		fullName: formData.get("fullName") as string,
 	};
+	try {
+		const { data, error } = await signUpSchema.safeParseAsync(formDataRaw);
+		if (error) return { error: "Invalid body received" };
+		const { email, password, fullName } = data;
+		const hashedPassword = await new Argon2id().hash(password);
+		const userId = generateId(10);
 
-	const { email, password, fullName } =
-		await signUpSchema.parseAsync(formDataRaw);
+		await prisma.user.create({
+			data: {
+				id: userId,
+				email,
+				hashedPassword,
+				roleId: 1,
+				fullName,
+			},
+		});
 
-	const hashedPassword = await new Argon2id().hash(password);
-	const userId = generateId(10);
+		const session = await lucia.createSession(userId, {});
+		const sessionCookie = lucia.createSessionCookie(session.id);
 
-	await prisma.user.create({
-		data: {
-			id: userId,
-			email,
-			hashedPassword,
-			roleId: 1,
-			fullName,
-		},
-	});
+		cookies().set(
+			sessionCookie.name,
+			sessionCookie.value,
+			sessionCookie.attributes,
+		);
+		redirect("/verify");
+	} catch (error) {
+		console.error(error);
+		return { error: "Something went wrong" };
+	}
+}
 
-	const session = await lucia.createSession(userId, {});
-	const sessionCookie = lucia.createSessionCookie(session.id);
+export async function createAdmin(formData: FormData) {
+	const formDataRaw = {
+		email: formData.get("email") as string,
+		password: formData.get("password") as string,
+		fullName: formData.get("fullName") as string,
+		roleId: formData.get("roleId") as unknown as number,
+	};
+	try {
+		const { data, error } = await adminSchema.safeParseAsync(formDataRaw);
+		if (error) return { error: "Invalid body received" };
+		const { email, password, roleId, fullName } = data;
+		const hashedPassword = await new Argon2id().hash(password);
+		const userId = generateId(10);
 
-	cookies().set(
-		sessionCookie.name,
-		sessionCookie.value,
-		sessionCookie.attributes,
-	);
-	redirect("/verify");
+		const user = await prisma.user.create({
+			data: {
+				id: userId,
+				email,
+				hashedPassword,
+				roleId,
+				fullName,
+			},
+		});
+		if (!user) return { error: "User creation failed" };
+		return { success: true, message: "User created successfully" };
+	} catch (error) {
+		console.error(error);
+		return { error: "Something went wrong" };
+	}
 }
 
 export async function signIn(formData: FormData) {
@@ -48,24 +83,30 @@ export async function signIn(formData: FormData) {
 		email: formData.get("email") as string,
 		password: formData.get("password") as string,
 	};
+	try {
+		const { data, error } = await signInSchema.safeParseAsync(formDataRaw);
+		if (error) return { error: "Invalid body received" };
+		const { email, password } = data;
+		const user = await prisma.user.findUnique({ where: { email } });
+		if (!user) return { error: "Incorrect email or password" };
+		const validPassword = await new Argon2id().verify(
+			user.hashedPassword,
+			password,
+		);
+		if (!validPassword) return { error: "Incorrect email or password" };
+		const session = await lucia.createSession(user.id, {});
+		const sessionCookie = lucia.createSessionCookie(session.id);
 
-	const { email, password } = await signInSchema.parseAsync(formDataRaw);
-	const user = await prisma.user.findUnique({ where: { email } });
-	if (!user) throw new Error("Incorrect email or password");
-	const validPassword = await new Argon2id().verify(
-		user.hashedPassword,
-		password,
-	);
-	if (!validPassword) throw new Error("Incorrect email or password");
-	const session = await lucia.createSession(user.id, {});
-	const sessionCookie = lucia.createSessionCookie(session.id);
-
-	cookies().set(
-		sessionCookie.name,
-		sessionCookie.value,
-		sessionCookie.attributes,
-	);
-	redirect("/verify");
+		cookies().set(
+			sessionCookie.name,
+			sessionCookie.value,
+			sessionCookie.attributes,
+		);
+		redirect("/verify");
+	} catch (error) {
+		console.error(error);
+		return { error: "Something went wrong" };
+	}
 }
 
 export async function signOut() {

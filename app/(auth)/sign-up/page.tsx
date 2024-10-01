@@ -1,23 +1,23 @@
 "use client";
 
+import { signUp } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
-	CardFooter,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { type SignUp, signUpSchema } from "@/lib/constants";
 import { Form, FormField } from "@/components/ui/form";
-import { signUp } from "@/actions/auth";
-import { useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { type SignUp, signUpSchema } from "@/lib/constants";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 
 //TODO: Delete this page to prevent unauthorized account creation. Since it is an internal tool, admin will create, modify and delete users
@@ -41,16 +41,16 @@ export default function Page() {
 		form.append("password", values.password);
 		startTransition(async () => {
 			try {
-				await signUp(form);
-			} catch (error) {
-				console.error(error);
-				if (error instanceof Error) {
+				const { error } = await signUp(form);
+				if (error) {
 					toast({
-						title: "Login Failed",
-						description: error.message,
+						title: "Sign up failed",
+						description: error,
 						variant: "destructive",
 					});
 				}
+			} catch (err) {
+				console.error(err);
 				toast({
 					title: "Something went wrong",
 					description: "Internal server error",

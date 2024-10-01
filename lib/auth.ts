@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
 
-import type { Session, User } from "lucia";
 import { lucia } from "@/lib/lucia";
+import type { Session, User } from "lucia";
 
 export const getAuth = cache(
 	async (): Promise<

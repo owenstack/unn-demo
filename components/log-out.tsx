@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "./ui/button";
 import { signOut } from "@/actions/auth";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle } from "lucide-react";
+import { useState } from "react";
+import { Button } from "./ui/button";
 
 export function LogOut() {
 	const { toast } = useToast();

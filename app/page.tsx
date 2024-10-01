@@ -1,19 +1,19 @@
 "use client";
 
+import NavBar from "@/components/nav-bar";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
-	CardHeader,
 	CardContent,
 	CardDescription,
+	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState, useTransition } from "react";
-import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/nav-bar";
+import { useState, useTransition } from "react";
 
 export default function Page() {
 	const router = useRouter();

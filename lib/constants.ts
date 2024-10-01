@@ -1,5 +1,5 @@
+import type { studentModel, userModel } from "@/prisma/zod";
 import { z } from "zod";
-import type { studentModel } from "@/prisma/zod";
 
 export interface Menu {
 	name: string;
@@ -10,6 +10,9 @@ export type SignUp = z.infer<typeof signUpSchema>;
 export type SignIn = z.infer<typeof signInSchema>;
 export type Invoice = z.infer<typeof invoiceSchema>;
 export type Student = z.infer<typeof studentModel>;
+export type User = z.infer<typeof userModel>;
+export type Admin = z.infer<typeof adminSchema>;
+export type UpdateAdmin = Omit<User, "hashedPassword">;
 
 export const sidebarList: Menu[] = [
 	{
@@ -53,6 +56,23 @@ export const signUpSchema = z.object({
 		.min(8, "Password must be more than 8 characters")
 		.max(32, "Password must be less than 32 characters"),
 	fullName: z.string().min(8),
+});
+
+export const adminSchema = z.object({
+	email: z
+		.string({ required_error: "Email is required" })
+		.min(1, "Email is required")
+		.email("Invalid email")
+		.refine((email) => email.endsWith("@unn.edu.ng"), {
+			message: "Email must end with @unn.edu.ng",
+		}),
+	password: z
+		.string({ required_error: "Password is required" })
+		.min(1, "Password is required")
+		.min(8, "Password must be more than 8 characters")
+		.max(32, "Password must be less than 32 characters"),
+	fullName: z.string().min(8),
+	roleId: z.number().max(3),
 });
 
 export const signInSchema = z.object({
@@ -115,12 +135,17 @@ export const paymentData = [
 ];
 
 export const userData = [
-	{ id: 1, name: "Admin User", role: "admin", email: "admin@unn.edu.ng" },
-	{ id: 2, name: "Dean User", role: "dean", email: "dean@unn.edu.ng" },
 	{
-		id: 3,
-		name: "Supervisor User",
-		role: "supervisor",
+		id: "1",
+		fullName: "Admin User",
+		roleId: 0,
+		email: "admin@unn.edu.ng",
+	},
+	{ id: "2", fullName: "Dean User", roleId: 2, email: "dean@unn.edu.ng" },
+	{
+		id: "3",
+		fullName: "Supervisor User",
+		roleId: 1,
 		email: "supervisor@unn.edu.ng",
 	},
 ];

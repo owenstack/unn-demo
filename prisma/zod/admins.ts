@@ -1,17 +1,22 @@
-import * as z from "zod"
-import { CompleteSession, relatedSessionModel, CompleteRole, relatedRoleModel } from "./index"
+import * as z from "zod";
+import {
+	type CompleteRole,
+	type CompleteSession,
+	relatedRoleModel,
+	relatedSessionModel,
+} from "./index";
 
 export const adminsModel = z.object({
-  id: z.string(),
-  email: z.string(),
-  fullName: z.string(),
-  hashedPassword: z.string(),
-  roleId: z.number().int(),
-})
+	id: z.string(),
+	email: z.string(),
+	fullName: z.string(),
+	hashedPassword: z.string(),
+	roleId: z.number().int(),
+});
 
 export interface CompleteAdmins extends z.infer<typeof adminsModel> {
-  sessions: CompleteSession[]
-  role: CompleteRole
+	sessions: CompleteSession[];
+	role: CompleteRole;
 }
 
 /**
@@ -19,7 +24,9 @@ export interface CompleteAdmins extends z.infer<typeof adminsModel> {
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const relatedAdminsModel: z.ZodSchema<CompleteAdmins> = z.lazy(() => adminsModel.extend({
-  sessions: relatedSessionModel.array(),
-  role: relatedRoleModel,
-}))
+export const relatedAdminsModel: z.ZodSchema<CompleteAdmins> = z.lazy(() =>
+	adminsModel.extend({
+		sessions: relatedSessionModel.array(),
+		role: relatedRoleModel,
+	}),
+);

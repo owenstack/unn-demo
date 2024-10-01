@@ -1,17 +1,18 @@
 "use client";
 
+import { createStudent } from "@/actions/students";
+import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useTransition, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { studentModel } from "@/prisma/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
+import { nanoid } from "nanoid";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { usePaystackPayment } from "react-paystack";
 import type { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { studentModel } from "@/prisma/zod";
-import { nanoid } from "nanoid";
-import { LoaderCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 
 export function PayForm({ rrr }: { rrr: string }) {
 	const { toast } = useToast();
@@ -29,27 +30,40 @@ export function PayForm({ rrr }: { rrr: string }) {
 		},
 	});
 
-	const onSuccess = async () => {
+	const onSuccess = () => {
 		setInvoiceId(`INV-${rrr.substring(0, 7)}`);
-		const response = await fetch("/api/students", {
-			method: "POST",
-			body: JSON.stringify(form.getValues()),
+		startTransition(async () => {
+			try {
+				const { error, message } = await createStudent(form.getValues());
+				if (error) {
+					toast({
+						title: "Something went wrong",
+						description: error,
+						variant: "destructive",
+					});
+				}
+				toast({
+					title: message,
+					description: "Closing webpage now",
+				});
+				setTimeout(() => {
+					window.close();
+				}, 2000);
+			} catch (error) {
+				console.error(error);
+				toast({
+					title: "Something went wrong",
+					description: "Internal server error",
+					variant: "destructive",
+				});
+			}
 		});
-		if (response.ok) {
-			toast({
-				title: "Upload successful",
-				description: "Closing webpage Now",
-			});
-			setTimeout(() => {
-				window.close();
-			}, 2000);
-		}
 	};
 
 	const onClose = () => {
 		toast({
 			title: "Payment Canceled",
-			description: "Are you sure about  that?",
+			description: "Are you sure about that?",
 		});
 	};
 
@@ -64,18 +78,16 @@ export function PayForm({ rrr }: { rrr: string }) {
 	const initPay = usePaystackPayment(config);
 
 	function submit() {
-		startTransition(async () => {
-			try {
-				initPay(config);
-			} catch (error) {
-				console.error(error);
-				toast({
-					title: "Something went wrong",
-					description: "Failed to save your information",
-					variant: "destructive",
-				});
-			}
-		});
+		try {
+			initPay(config);
+		} catch (error) {
+			console.error(error);
+			toast({
+				title: "Something went wrong",
+				description: "Failed to save your information",
+				variant: "destructive",
+			});
+		}
 	}
 	return (
 		<div className="flex items-center justify-center min-h-screen ">

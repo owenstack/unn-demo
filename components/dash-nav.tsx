@@ -1,3 +1,11 @@
+import { getAuth } from "@/lib/auth";
+import { sidebarList } from "@/lib/constants";
+import { Cog, Menu, Milestone } from "lucide-react";
+import Link from "next/link";
+import { LogOut } from "./log-out";
+import { SideBar } from "./side-bar";
+import { Title } from "./title";
+import { Button } from "./ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -6,14 +14,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Menu, Milestone } from "lucide-react";
-import { SideBar } from "./side-bar";
-import { Button } from "./ui/button";
-import { Sheet, SheetTrigger, SheetContent } from "./ui/sheet";
-import { getAuth } from "@/lib/auth";
-import { Title } from "./title";
-import { sidebarList } from "@/lib/constants";
-import { LogOut } from "./log-out";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 export async function DashNav() {
 	const { user } = await getAuth();
@@ -57,6 +58,11 @@ export async function DashNav() {
 										? "Supervisor"
 										: "Dean"}
 							</span>
+						</DropdownMenuItem>
+						<DropdownMenuItem>
+							<Link href="/settings" className="flex">
+								<Cog className="w-4 h-4 mr-2" /> Settings
+							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
 							<LogOut />

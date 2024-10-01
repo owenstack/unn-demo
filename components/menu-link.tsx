@@ -1,14 +1,14 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import * as LucideIcons from "lucide-react";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import * as LucideIcons from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface MenuLinkProps {
 	url: string;

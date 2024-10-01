@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -9,16 +10,15 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { type SignIn, signInSchema } from "@/lib/constants";
 import { Form, FormField } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { signIn } from "@/actions/auth";
-import { useTransition } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { type SignIn, signInSchema } from "@/lib/constants";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
+import { useTransition } from "react";
+import { useForm } from "react-hook-form";
 
 export default function Page() {
 	const { toast } = useToast();
@@ -37,16 +37,14 @@ export default function Page() {
 		form.append("password", values.password);
 		startTransition(async () => {
 			try {
-				await signIn(form);
+				const { error } = await signIn(form);
+				toast({
+					title: "Login failed",
+					description: error,
+					variant: "destructive",
+				});
 			} catch (error) {
 				console.error(error);
-				if (error instanceof Error) {
-					toast({
-						title: "Login Failed",
-						description: error.message,
-						variant: "destructive",
-					});
-				}
 				toast({
 					title: "Something went wrong",
 					description: "Internal server error",

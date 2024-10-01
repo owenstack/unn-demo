@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { CreditCard, Users, Calendar, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { paymentData } from "@/lib/constants";
+import { Calendar, CreditCard, Download, Users } from "lucide-react";
+import React, { useState } from "react";
 
 export default function Dashboard() {
 	return (
