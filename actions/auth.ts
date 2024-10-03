@@ -127,3 +127,44 @@ export async function signOut() {
 
 	redirect("/login");
 }
+
+export async function changePassword(email: string, password: string) {
+	try {
+		const { user } = await getAuth();
+		if (!user) return { error: "Not authenticated" };
+		if (user.email !== email)
+			return { error: "Email does not match logged in user" };
+		const response = await prisma.user.update({
+			where: {
+				email,
+			},
+			data: {
+				hashedPassword: await new Argon2id().hash(password),
+			},
+		});
+		if (!response) return { error: "Failed to update password" };
+		return { success: true, message: "Password updated successfully" };
+	} catch (error) {
+		console.error(error);
+		return { error: "Internal server error" };
+	}
+}
+
+export async function changeEmail(email: string) {
+	try {
+		const { user } = await getAuth();
+		const response = await prisma.user.update({
+			where: {
+				id: user?.id,
+			},
+			data: {
+				email: email,
+			},
+		});
+		if (!response) return { error: "Failed to update email" };
+		return { success: true, message: "Email updated successfully" };
+	} catch (error) {
+		console.error(error);
+		return { error: "Internal server error" };
+	}
+}

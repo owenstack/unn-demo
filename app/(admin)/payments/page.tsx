@@ -76,7 +76,7 @@ export default function Page() {
 					<CardTitle>Payment Records</CardTitle>
 				</CardHeader>
 				<CardContent>
-					{data ? (
+					{data && data.length > 0 ? (
 						<div className="overflow-x-auto">
 							<Table>
 								<TableHeader>
@@ -104,7 +104,10 @@ export default function Page() {
 							</Table>
 						</div>
 					) : (
-						<div>No data available</div>
+						<div className="gap-4">
+							<h2>No data available</h2>
+							<p>It seems there are no students matching your query</p>
+						</div>
 					)}
 				</CardContent>
 			</Card>

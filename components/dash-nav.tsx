@@ -60,11 +60,6 @@ export async function DashNav() {
 							</span>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
-							<Link href="/settings" className="flex">
-								<Cog className="w-4 h-4 mr-2" /> Settings
-							</Link>
-						</DropdownMenuItem>
-						<DropdownMenuItem>
 							<LogOut />
 						</DropdownMenuItem>
 					</DropdownMenuContent>

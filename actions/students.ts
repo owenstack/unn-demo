@@ -3,6 +3,7 @@
 import { type Invoice, type Student, invoiceSchema } from "@/lib/constants";
 import prisma from "@/lib/db";
 import { studentModel } from "@/prisma/zod";
+import { unstable_cache as cache } from "next/cache";
 
 export async function getStudent(values: Invoice) {
 	try {
@@ -49,4 +50,18 @@ export async function searchStudent(search: string) {
 		console.error(error);
 		return { error: "Internal server error" };
 	}
+}
+
+export async function getStudents() {
+	return await cache(
+		async () => {
+			const response = await prisma.student.findMany();
+			return response;
+		},
+		["students"],
+		{
+			revalidate: 3600,
+			tags: ["students"],
+		},
+	)();
 }

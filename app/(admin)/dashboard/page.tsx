@@ -1,40 +1,55 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { paymentData } from "@/lib/constants";
 import { Calendar, CreditCard, Download, Users } from "lucide-react";
-import React, { useState } from "react";
+import { getStudents } from "@/actions/students";
+import { PaymentChart } from "@/components/payment-chart";
 
-export default function Dashboard() {
+export default async function Page() {
+	const response = await getStudents();
+	if (!response) {
+		return (
+			<Card>
+				<CardHeader>
+					<CardTitle>No Data</CardTitle>
+				</CardHeader>
+				<CardContent>No student data found</CardContent>
+			</Card>
+		);
+	}
+
+	const data = response.reduce<{ month: string; count: number }[]>(
+		(acc, student) => {
+			const month = new Date(student.paidAt).toLocaleString("default", {
+				month: "long",
+			});
+			const existingMonth = acc.find((item) => item.month === month);
+			if (existingMonth) {
+				existingMonth.count++;
+			} else {
+				acc.push({ month, count: 1 });
+			}
+			return acc;
+		},
+		[],
+	);
+
+	const totalRevenue = data.reduce((total, item) => total + item.count, 0);
+
+	const today = new Date().setHours(0, 0, 0, 0);
+	const paymentsToday = response.reduce((total, item) => {
+		const paymentDate = new Date(item.paidAt).setHours(0, 0, 0, 0);
+		return paymentDate === today ? total + 10000 : total;
+	}, 0);
+
 	return (
 		<Tabs defaultValue="overview" className="space-y-4">
 			<TabsList>
 				<TabsTrigger value="overview">Overview</TabsTrigger>
-				<TabsTrigger value="details">Details</TabsTrigger>
 				<TabsTrigger value="reports">Reports</TabsTrigger>
 			</TabsList>
 			<TabsContent value="overview" className="space-y-4">
-				<Card>
-					<CardHeader>
-						<CardTitle>Payment Analytics</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="h-[200px] flex items-end justify-between">
-							<div className="w-1/4 bg-blue-500 h-full" />
-							<div className="w-1/4 bg-green-500 h-[60%]" />
-							<div className="w-1/4 bg-yellow-500 h-[30%]" />
-							<div className="w-1/4 bg-red-500 h-[10%]" />
-						</div>
-						<div className="flex justify-between mt-4 text-sm">
-							<div>Total</div>
-							<div>Paid</div>
-							<div>Pending</div>
-							<div>Overdue</div>
-						</div>
-					</CardContent>
-				</Card>
+				<PaymentChart data={data} />
 				{/* Summary Cards */}
 				<div className="grid gap-4 md:grid-cols-3">
 					<Card>
@@ -45,7 +60,7 @@ export default function Dashboard() {
 							<CreditCard className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">12345</div>
+							<div className="text-2xl font-bold">₦ {totalRevenue}</div>
 						</CardContent>
 					</Card>
 					<Card>
@@ -56,7 +71,7 @@ export default function Dashboard() {
 							<Calendar className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">5</div>
+							<div className="text-2xl font-bold">₦ {paymentsToday}</div>
 						</CardContent>
 					</Card>
 					<Card>
@@ -67,23 +82,10 @@ export default function Dashboard() {
 							<Users className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">120</div>
+							<div className="text-2xl font-bold">{response.length}</div>
 						</CardContent>
 					</Card>
 				</div>
-			</TabsContent>
-			<TabsContent value="details">
-				<Card>
-					<CardHeader>
-						<CardTitle>Detailed View</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p>
-							This section would contain more detailed information and advanced
-							features related to the current view.
-						</p>
-					</CardContent>
-				</Card>
 			</TabsContent>
 			<TabsContent value="reports">
 				<Card>
