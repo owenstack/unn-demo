@@ -4,6 +4,11 @@ import { getAuth } from "@/lib/auth";
 import { sidebarList } from "@/lib/constants";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+	title: "",
+};
 
 export default async function DashLayout({
 	children,

@@ -5,9 +5,9 @@ import type { ReactNode } from "react";
 export default async function AuthLayout({
 	children,
 }: { children: ReactNode }) {
-	const { session } = await getAuth();
+	const { user } = await getAuth();
 
-	if (!session) redirect("/verify");
+	if (user) redirect("/verify");
 
 	return <>{children}</>;
 }

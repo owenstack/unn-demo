@@ -90,7 +90,7 @@ export function PasswordChange({ email }: { email: string }) {
 				/>
 				<Button type="submit" disabled={pending}>
 					{pending ? (
-						<LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+						<LoaderCircle className="h-4 w-4 animate-spin" />
 					) : (
 						"Update"
 					)}
