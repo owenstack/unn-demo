@@ -1,9 +1,9 @@
+import { getStudents } from "@/actions/students";
+import { PaymentChart } from "@/components/payment-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, CreditCard, Download, Users } from "lucide-react";
-import { getStudents } from "@/actions/students";
-import { PaymentChart } from "@/components/payment-chart";
 
 export default async function Page() {
 	const response = await getStudents();

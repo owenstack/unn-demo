@@ -1,4 +1,6 @@
-import { Label } from "@/components/ui/label";
+import { ChangeEmail } from "@/components/email-change";
+import { PasswordChange } from "@/components/password-change";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
 	Card,
 	CardContent,
@@ -6,11 +8,9 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { getAuth } from "@/lib/auth";
-import { ChangeEmail } from "@/components/email-change";
-import { PasswordChange } from "@/components/password-change";
 
 export default async function Page() {
 	const { user } = await getAuth();

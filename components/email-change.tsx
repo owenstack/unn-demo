@@ -1,15 +1,15 @@
 "use client";
 
-import { Form, FormField } from "./ui/form";
-import { useForm } from "react-hook-form";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/hooks/use-toast";
 import { changeEmail } from "@/actions/auth";
-import { useTransition } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
+import { useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "./ui/button";
+import { Form, FormField } from "./ui/form";
+import { Input } from "./ui/input";
 
 const schema = z.object({
 	email: z.string().email(),

@@ -2,9 +2,9 @@ import { DashNav } from "@/components/dash-nav";
 import { SideBar } from "@/components/side-bar";
 import { getAuth } from "@/lib/auth";
 import { sidebarList } from "@/lib/constants";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
 	title: "",
@@ -34,7 +34,7 @@ export default async function DashLayout({
 			{/* Main content */}
 			<div className="flex-1 flex flex-col overflow-hidden">
 				{/* Navbar */}
-				<DashNav />
+				<DashNav routes={routes} user={user} />
 				{/* Page content */}
 				<main className="flex-1 overflow-x-hidden overflow-y-auto p-4">
 					{children}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import {
 	Select,
 	SelectContent,
@@ -7,7 +8,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "./ui/select";
-import { useTheme } from "next-themes";
 
 export function ThemeToggle() {
 	const { theme, setTheme } = useTheme();

@@ -1,7 +1,6 @@
-import { getAuth } from "@/lib/auth";
-import { sidebarList } from "@/lib/constants";
-import { Cog, Menu, Milestone } from "lucide-react";
-import Link from "next/link";
+import type { Menu } from "@/lib/constants";
+import type { User } from "lucia";
+import { Milestone, Sidebar } from "lucide-react";
 import { LogOut } from "./log-out";
 import { SideBar } from "./side-bar";
 import { Title } from "./title";
@@ -16,24 +15,13 @@ import {
 } from "./ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
-export async function DashNav() {
-	const { user } = await getAuth();
-	const routes = sidebarList.filter((p) => {
-		if (user?.roleId === 1) {
-			return p.url === "/verify";
-		}
-		if (user?.roleId === 2) {
-			return p.url !== "/users";
-		}
-		return true;
-	});
-
+export function DashNav({ routes, user }: { routes: Menu[]; user: User }) {
 	return (
 		<header className="flex justify-between items-center p-4 shadow-md">
 			<Sheet>
 				<SheetTrigger asChild>
 					<Button variant="ghost" size="icon" className="lg:hidden">
-						<Menu className="h-6 w-6" />
+						<Sidebar className="h-6 w-6" />
 					</Button>
 				</SheetTrigger>
 				<SheetContent side="left" className="w-64 p-0">

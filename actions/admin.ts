@@ -35,28 +35,3 @@ export async function updateUser(values: UpdateAdmin) {
 		return { error: "Something went wrong" };
 	}
 }
-
-export async function getUsers() {
-	try {
-		const { user } = await getAuth();
-		if (!(user?.roleId === 0)) return { error: "Unauthorized operation" };
-		const response = await prisma.user.findMany({
-			where: {
-				id: {
-					not: user?.id,
-				},
-			},
-			select: {
-				id: true,
-				fullName: true,
-				email: true,
-				roleId: true,
-			},
-		});
-		if (!response) return { error: "No users found" };
-		return { success: true, message: response };
-	} catch (error) {
-		console.error(error);
-		return { error: "Something went wrong" };
-	}
-}
