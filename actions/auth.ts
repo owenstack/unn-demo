@@ -3,11 +3,15 @@
 import { getAuth } from "@/lib/auth";
 import { adminSchema, signInSchema, signUpSchema } from "@/lib/constants";
 import prisma from "@/lib/db";
-import { lucia } from "@/lib/lucia";
-import { generateId } from "lucia";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import {
+	createSession,
+	invalidateSession,
+	setSessionTokenCookie,
+	deleteSessionTokenCookie,
+	generateSessionToken,
+} from "@/lib/session";
 import { Argon2id } from "oslo/password";
+import { nanoid } from "nanoid";
 
 export async function signUp(formData: FormData) {
 	const formDataRaw = {
@@ -20,7 +24,7 @@ export async function signUp(formData: FormData) {
 		if (error) return { error: "Invalid body received" };
 		const { email, password, fullName } = data;
 		const hashedPassword = await new Argon2id().hash(password);
-		const userId = generateId(10);
+		const userId = nanoid(10);
 
 		await prisma.user.create({
 			data: {
@@ -32,15 +36,10 @@ export async function signUp(formData: FormData) {
 			},
 		});
 
-		const session = await lucia.createSession(userId, {});
-		const sessionCookie = lucia.createSessionCookie(session.id);
-
-		cookies().set(
-			sessionCookie.name,
-			sessionCookie.value,
-			sessionCookie.attributes,
-		);
-		redirect("/verify");
+		const token = generateSessionToken();
+		const session = await createSession(token, userId);
+		setSessionTokenCookie(token, session.expiresAt);
+		return { success: true, redirectTo: "/verify" };
 	} catch (error) {
 		console.error(error);
 		return { error: "Something went wrong" };
@@ -59,7 +58,7 @@ export async function createAdmin(formData: FormData) {
 		if (error) return { error: "Invalid body received" };
 		const { email, password, roleId, fullName } = data;
 		const hashedPassword = await new Argon2id().hash(password);
-		const userId = generateId(10);
+		const userId = nanoid(10);
 
 		const user = await prisma.user.create({
 			data: {
@@ -94,15 +93,10 @@ export async function signIn(formData: FormData) {
 			password,
 		);
 		if (!validPassword) return { error: "Incorrect email or password" };
-		const session = await lucia.createSession(user.id, {});
-		const sessionCookie = lucia.createSessionCookie(session.id);
-
-		cookies().set(
-			sessionCookie.name,
-			sessionCookie.value,
-			sessionCookie.attributes,
-		);
-		redirect("/verify");
+		const token = generateSessionToken();
+		const session = await createSession(token, user.id);
+		setSessionTokenCookie(token, session.expiresAt);
+		return { success: true, redirectTo: "/verify" };
 	} catch (error) {
 		console.error(error);
 		return { error: "Something went wrong" };
@@ -112,20 +106,16 @@ export async function signIn(formData: FormData) {
 export async function signOut() {
 	const { session } = await getAuth();
 	if (!session) {
-		redirect("/login");
+		return { success: true, redirectTo: "/login" };
 	}
-
-	await lucia.invalidateSession(session.id);
-
-	const sessionCookie = lucia.createBlankSessionCookie();
-
-	cookies().set(
-		sessionCookie.name,
-		sessionCookie.value,
-		sessionCookie.attributes,
-	);
-
-	redirect("/login");
+	try {
+		await invalidateSession(session.id);
+		deleteSessionTokenCookie();
+		return { success: true, redirectTo: "/login" };
+	} catch (error) {
+		console.error(error);
+		return { error: "Internal server error" };
+	}
 }
 
 export async function changePassword(email: string, password: string) {

@@ -1,5 +1,5 @@
 import type { Menu } from "@/lib/constants";
-import type { User } from "lucia";
+import type { User } from "@prisma/client";
 import { Milestone, Sidebar } from "lucide-react";
 import { LogOut } from "./log-out";
 import { SideBar } from "./side-bar";
